@@ -1,0 +1,4 @@
+incompressibleTwoPhaseMixture/incompressibleTwoPhaseMixture.C
+phaseFieldFoam.C
+
+EXE = $(FOAM_USER_APPBIN)/phaseFieldFoam
