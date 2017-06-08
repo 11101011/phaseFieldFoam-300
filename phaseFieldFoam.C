@@ -56,12 +56,12 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createDynamicFvMesh.H"
+    #include "initContinuityErrs.H"
 
     pimpleControl pimple(mesh);
 
-    #include "initContinuityErrs.H"
+    #include "createControls.H"
     #include "createFields.H"
-    #include "createTimeControls.H"
     #include "CourantNo.H"
     #include "setInitialDeltaT.H"
 
@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
     );
 
     #include "correctPhi.H"
+    #include "createUf.H"
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
 
     while (runTime.run())
     {
-        #include "readControls.H"
+        #include "createControls.H"
 
         if (t && (runTime.value()<=runTime.deltaTValue()))
         {
@@ -135,12 +136,18 @@ int main(int argc, char *argv[])
                 << runTime.elapsedCpuTime() - timeBeforeMeshUpdate
                 << " s" << endl;
 
-            gh = g& mesh.C();
-            ghf = g& mesh.Cf();
+            gh = (g& mesh.C()) - ghRef;
+            ghf = (g& mesh.Cf()) - ghRef;
         }
 
         if (mesh.changing() && correctPhi)
         {
+            //-Calculate absolute flux from the mapped surface velocity
+            phi = mesh.Sf() & Uf;
+
+            //-Make the flux relative to the mesh motion
+            fvc::makeRelative(phi, U);
+
             #include "correctPhi.H"
         }
 
@@ -179,6 +186,11 @@ int main(int argc, char *argv[])
                 {
                     #include "pEqn.H"
                 }
+
+                if (pimple.turbCorr())
+                {
+                    turbulence->correct();
+                }
             }
         }
 
@@ -190,6 +202,8 @@ int main(int argc, char *argv[])
     }
 
     Info<< "End\n" << endl;
+
+    return 0;
 }
 
 // ************************************************************************* //

@@ -450,17 +450,17 @@ void twoPhaseMixture::updateContactAngle(volScalarField& curAlpha1_)
             scalarField safetyFactor = (pos(curPatch - zeroAlpha1 + scalar(0.00001)) - neg(zeroAlpha1 - curPatch + scalar(0.00001)))*scalar(0.0001);
 
             //-Perform the slope adjustment to ensure the boundary value of alpha1 is >= 0 and <= 1.
-            gradAlpha1 *= 
+            gradAlpha1 *=
             (
                 upperFilter*(scalar(1) - zeroAlpha1)/(curPatch - zeroAlpha1 + safetyFactor)
               + lowerFilter*(scalar(-1)*zeroAlpha1)/(curPatch - zeroAlpha1 + safetyFactor)
               + (scalar(1) - upperFilter - lowerFilter)
             );
 
-            curPatch.evaluate();  
+            curPatch.evaluate();
 
-            Info<< "Boundary Min: " 
-                << min(curPatch*(scalar(1) - curPatch)) 
+            Info<< "Boundary Min: "
+                << min(curPatch*(scalar(1) - curPatch))
                 << endl;
         }
     }

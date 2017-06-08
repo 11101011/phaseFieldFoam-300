@@ -269,11 +269,14 @@
         incompressible::turbulenceModel::New(U, phi, twoPhaseProperties)
     );
 
-    #include "readGravitationalAcceleration.H"
 
-    Info << "Calculating field g.h\n" << endl;
-    volScalarField gh("gh", g& mesh.C());
-    surfaceScalarField ghf("ghf",g& mesh.Cf());
+//     Info << "Calculating field g.h\n" << endl;
+//     volScalarField gh("gh", g& mesh.C());
+//     surfaceScalarField ghf("ghf",g& mesh.Cf());
+
+    #include "readGravitationalAcceleration.H"
+    #include "readhRef.H"
+    #include "gh.H"
 
     volScalarField p
     (
