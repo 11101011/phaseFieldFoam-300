@@ -1,3 +1,0 @@
-SOURCE = \
-incompressibleTwoPhaseMixture/incompressibleTwoPhaseMixture.C \
-phaseFieldFoam.C 
