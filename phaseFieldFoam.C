@@ -87,6 +87,13 @@ int main(int argc, char *argv[])
     bool t = true;
     bool b = true;
 
+    //-Obtain a list of all boundaries on the mesh
+    const fvPatchList& patches = mesh.boundary();
+    int N = static_cast<int> (patches.size());
+
+    scalar boundaryMin[N];
+    bool boundaryMin_t[N];
+
     Info<< "\nStarting time loop\n" << endl;
 
     while (runTime.run())
@@ -185,11 +192,6 @@ int main(int argc, char *argv[])
                 while (pimple.correct())
                 {
                     #include "pEqn.H"
-                }
-
-                if (pimple.turbCorr())
-                {
-                    turbulence->correct();
                 }
             }
         }

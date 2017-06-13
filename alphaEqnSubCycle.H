@@ -47,10 +47,17 @@
 
     alpha1 = alpha1.oldTime() + runTime.deltaT()*K_alpha1;
 
-    twoPhaseProperties.updateContactAngle(alpha1); // Boundary Min: <--- ?
+    twoPhaseProperties.updateContactAngle(alpha1,boundaryMin,boundaryMin_t);
 
-    Info<< "Phase-1 volume fraction = "
-        << alpha1.weightedAverage(mesh.Vsc()).value()
+    for (int i=1; i<=N; i++)
+    {
+        if (boundaryMin_t[i])
+        {
+            Info<< "Boundary min on patch " << i << ": " << boundaryMin[i] << endl;
+        }
+    }
+
+    Info<< "Phase-1 volume fraction = " << alpha1.weightedAverage(mesh.Vsc()).value()
         << "  Min(alpha1) = " << min(alpha1).value()
         << "  Max(alpha1) = " << max(alpha1).value()
         << endl;

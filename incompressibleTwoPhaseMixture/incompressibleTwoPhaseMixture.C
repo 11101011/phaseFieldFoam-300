@@ -407,7 +407,7 @@ dimensionedScalar twoPhaseMixture::alpha1Multiplier() const
     return sqr(scalar(0.5)*pi/(scalar(1) - scalar(2)*filterAlpha_));
 }
 
-void twoPhaseMixture::updateContactAngle(volScalarField& curAlpha1_)
+void twoPhaseMixture::updateContactAngle(volScalarField& curAlpha1_, scalar *boundaryMin, bool *boundaryMin_t)
 {
     //-Create a pointer to the mesh
     const fvMesh& mesh = curAlpha1_.mesh();
@@ -415,12 +415,18 @@ void twoPhaseMixture::updateContactAngle(volScalarField& curAlpha1_)
     //-Obtain a list of all boundaries on the mesh
     const fvPatchList& patches = mesh.boundary();
 
+    int i = 1;
+
     //-Cycle through each boundary, current boundary indicated by patchi within the loop
     forAll(patches, patchi)
     {
+        boundaryMin_t[i] = false;
+
         //-Check to see if the current boundary is a fixedGradient type
         if (isA<fixedGradientFvPatchScalarField>(curAlpha1_.boundaryField()[patchi]))
         {
+            boundaryMin_t[i] = true;
+
             //-Create a reference to the patch field. Note that this variable can be treated
             // as a scalar field containing the values of curAlpha1_ on the boundary face
             fixedGradientFvPatchScalarField& curPatch = refCast<fixedGradientFvPatchScalarField>(curAlpha1_.boundaryField()[patchi]);
@@ -459,10 +465,10 @@ void twoPhaseMixture::updateContactAngle(volScalarField& curAlpha1_)
 
             curPatch.evaluate();
 
-            Info<< "Boundary Min: "
-                << min(curPatch*(scalar(1) - curPatch))
-                << endl;
+            boundaryMin[i] = min(curPatch*(scalar(1) - curPatch));
         }
+
+        i++;
     }
 
     //-Simply ensure that all boundary conditions are updated (i.e. if you have other boundaries, such as zeroGradient, this is required)

@@ -273,10 +273,7 @@ public:
         }
 
         //-Correct alpha1 for a given contact angle
-        void updateContactAngle
-        (
-            volScalarField& curAlpha1_
-        );
+        void updateContactAngle(volScalarField& curAlpha1_, scalar *boundaryMin, bool *boundaryMin_t);
 
         dimensionedScalar epsTOne();
         dimensionedScalar mixingEDensityTOne();
